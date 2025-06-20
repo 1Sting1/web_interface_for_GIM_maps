@@ -1,25 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem, CircularProgress, Alert, Box } from '@mui/material';
 
 function ModelSelector({ selectedModel, onModelChange }) {
   const [models, setModels] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchModels = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const response = await fetch('/api/models');
-        const data = await response.json();
+        if (!response.ok) throw new Error('Ошибка загрузки моделей');
+        let data = await response.json();
+        // Если массив строк, преобразуем в объекты
+        if (Array.isArray(data) && typeof data[0] === 'string') {
+          data = data.map(code => ({ code, name: code }));
+        }
         setModels(data);
         if (data.length > 0 && !selectedModel) {
           onModelChange(data[0]);
         }
       } catch (error) {
-        console.error('Error fetching models:', error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchModels();
   }, [selectedModel, onModelChange]);
+
+  if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}><CircularProgress /></Box>;
+  if (error) return <Alert severity="error">{error}</Alert>;
 
   return (
     <FormControl fullWidth>
@@ -44,4 +58,4 @@ function ModelSelector({ selectedModel, onModelChange }) {
   );
 }
 
-export default ModelSelector; 
+export default ModelSelector;
