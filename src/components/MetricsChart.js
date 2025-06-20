@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Box, Typography } from '@mui/material';
+import { Paper, Box, Typography, CircularProgress, Alert } from '@mui/material';
 import {
   LineChart,
   Line,
@@ -13,33 +13,38 @@ import {
 
 function MetricsChart({ modelCode }) {
   const [metrics, setMetrics] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!modelCode) return;
-
+    setLoading(true);
+    setError(null);
     const fetchMetrics = async () => {
       try {
         const response = await fetch(`/api/get_metrics/${modelCode}`);
+        if (!response.ok) throw new Error('Ошибка загрузки метрик');
         const data = await response.json();
         setMetrics(data);
       } catch (error) {
-        console.error('Error fetching metrics:', error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchMetrics();
   }, [modelCode]);
 
-  if (!metrics.length) {
-    return null;
-  }
+  if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}><CircularProgress /></Box>;
+  if (error) return <Alert severity="error">{error}</Alert>;
+  if (!metrics.length) return null;
 
   return (
-    <Paper elevation={3} sx={{ p: 2, mt: 2 }}>
+    <Paper elevation={3} sx={{ p: 2, mt: 2, width: '100%' }}>
       <Typography variant="h6" gutterBottom>
         Метрики модели
       </Typography>
-      <Box sx={{ height: 300 }}>
+      <Box sx={{ width: '100%', height: 400 }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={metrics}
