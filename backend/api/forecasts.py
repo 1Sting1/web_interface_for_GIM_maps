@@ -18,4 +18,4 @@ def get_forecast_size(forecast_id: str):
     resp = requests.get(f"{API_BASE}/get_forecast_size/{forecast_id}")
     if resp.status_code != 200:
         raise HTTPException(status_code=resp.status_code, detail=resp.text)
-    return JSONResponse(content=resp.json())
+    return JSONResponse(content=resp.json()) 

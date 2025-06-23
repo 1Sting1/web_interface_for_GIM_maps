@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Paper, Box, Slider, Button, Typography, CircularProgress, Alert, Backdrop } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 
-function GIMCard({ forecastId, shift, onShiftChange, forecastSize }) {
+function GIMCard({ forecastId, forecastStartDate, modelCode, shift, onShiftChange, forecastSize }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -36,8 +36,13 @@ function GIMCard({ forecastId, shift, onShiftChange, forecastSize }) {
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
+      let filename = `forecast_${forecastId}.npz`;
+      if (modelCode && forecastStartDate) {
+        const safeDate = forecastStartDate.replace('T', '_').replace(/[:]/g, '-');
+        filename = `${modelCode}_forecast_${safeDate}.npz`;
+      }
       a.href = url;
-      a.download = `forecast_${forecastId}.npz`;
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -63,10 +68,25 @@ function GIMCard({ forecastId, shift, onShiftChange, forecastSize }) {
             max={forecastSize - 1}
             marks
             valueLabelDisplay="auto"
-            sx={{ flex: 1 }}
+            sx={{ 
+              flex: 1,
+              '& .MuiSlider-rail': {
+                opacity: 1,
+                backgroundColor: '#1976d2',
+              },
+              '& .MuiSlider-track': {
+                backgroundColor: '#1976d2',
+              },
+              '& .MuiSlider-mark': {
+                color: 'white',
+              },
+              '& .MuiSlider-markActive': {
+                backgroundColor: 'white',
+              },
+            }}
           />
           <Typography variant="body2">
-            Сдвиг: {shift}
+            Часы: {shift}
           </Typography>
         </Box>
       </Box>
@@ -98,6 +118,7 @@ function GIMCard({ forecastId, shift, onShiftChange, forecastSize }) {
               width: '100%',
               height: '100%',
               objectFit: 'contain',
+              transform: 'scale(1.3)',
             }}
           />
         )}
@@ -113,7 +134,7 @@ function GIMCard({ forecastId, shift, onShiftChange, forecastSize }) {
           onClick={handleDownload}
           disabled={!forecastId || loading}
         >
-          Скачать *.npz файл
+          Скачать .NPZ-файл
         </Button>
       </Box>
     </Paper>
