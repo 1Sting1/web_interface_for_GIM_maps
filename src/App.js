@@ -7,19 +7,17 @@ import MetricsChart from './components/MetricsChart';
 
 function App() {
   const [loading, setLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState(null);
+  const [selectedModel, setSelectedModel] = useState({ code: 'GIMini-LSTM-F10.7-7' });
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedShift, setSelectedShift] = useState(0);
   const [forecastSize, setForecastSize] = useState(24);
 
-  // Сброс даты и shift при смене модели
   const handleModelChange = (model) => {
     setSelectedModel(model);
     setSelectedDate(null);
     setSelectedShift(0);
   };
 
-  // Сброс shift при смене даты
   const handleDateSelect = (dateObj) => {
     setSelectedDate(dateObj);
     setSelectedShift(0);
@@ -45,7 +43,6 @@ function App() {
       }
     };
     fetchForecastSize();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);
 
   return (
@@ -63,6 +60,8 @@ function App() {
         <MetricsChart modelCode={selectedModel?.code} />
         <GIMCard
           forecastId={selectedDate?.forecastId}
+          forecastStartDate={selectedDate?.forecast_start_date}
+          modelCode={selectedDate?.model_code || selectedModel?.code}
           shift={selectedShift}
           onShiftChange={setSelectedShift}
           forecastSize={forecastSize}
@@ -90,4 +89,4 @@ function App() {
   );
 }
 
-export default App;
+export default App; 

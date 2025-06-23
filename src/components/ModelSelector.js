@@ -14,7 +14,6 @@ function ModelSelector({ selectedModel, onModelChange }) {
         const response = await fetch('/api/models');
         if (!response.ok) throw new Error('Ошибка загрузки моделей');
         let data = await response.json();
-        // Если массив строк, преобразуем в объекты
         if (Array.isArray(data) && typeof data[0] === 'string') {
           data = data.map(code => ({ code, name: code }));
         }
@@ -58,4 +57,4 @@ function ModelSelector({ selectedModel, onModelChange }) {
   );
 }
 
-export default ModelSelector;
+export default ModelSelector; 

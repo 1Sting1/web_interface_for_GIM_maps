@@ -19,9 +19,9 @@ function ForecastCalendar({ selectedDate, onDateSelect, modelCode }) {
         const response = await fetch(`/api/get_forecasts/${modelCode}`);
         if (!response.ok) throw new Error('Ошибка загрузки прогнозов');
         const data = await response.json();
-        setAvailableDates(data.map(forecast => ({ date: new Date(forecast.forecast_start_date), id: forecast.id })));
+        setAvailableDates(data.map(forecast => ({ date: new Date(forecast.forecast_start_date), id: forecast.id, forecast_start_date: forecast.forecast_start_date, model_code: forecast.model_code })));
         if (data.length > 0 && !selectedDate) {
-          onDateSelect({ date: new Date(data[0].forecast_start_date), forecastId: data[0].id });
+          onDateSelect({ date: new Date(data[0].forecast_start_date), forecastId: data[0].id, forecast_start_date: data[0].forecast_start_date, model_code: data[0].model_code });
         }
       } catch (error) {
         setError(error.message);
@@ -57,7 +57,7 @@ function ForecastCalendar({ selectedDate, onDateSelect, modelCode }) {
                   available.date.getFullYear() === newDate.getFullYear()
               );
               if (forecast) {
-                onDateSelect({ date: forecast.date, forecastId: forecast.id });
+                onDateSelect({ date: forecast.date, forecastId: forecast.id, forecast_start_date: forecast.forecast_start_date, model_code: forecast.model_code });
               }
             }}
             shouldDisableDate={(date) => !isDateAvailable(date)}
@@ -108,4 +108,4 @@ function ForecastCalendar({ selectedDate, onDateSelect, modelCode }) {
   );
 }
 
-export default ForecastCalendar;
+export default ForecastCalendar; 
