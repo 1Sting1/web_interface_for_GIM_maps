@@ -72,11 +72,34 @@ function ForecastCalendar({ selectedDate, onDateSelect, modelCode }) {
                   backgroundColor: 'darkgreen',
                 },
               },
+              '& .MuiPickersDay-root:not(.Mui-disabled)': {
+                border: '1px solid #4caf50',
+                borderRadius: '50%',
+                '&:hover': {
+                  backgroundColor: '#e8f5e8',
+                  border: '1px solid #2e7d32',
+                },
+              },
+              '& .MuiPickersDay-root.Mui-disabled': {
+                color: '#ccc',
+              },
               '& .MuiDayCalendar-weekContainer': {
                 display: 'flex',
                 justifyContent: 'space-between',
                 width: '100%',
               },
+              '& .MuiDayCalendar-header': {
+                width: '100%',
+                '& .MuiDayCalendar-weekDayLabel': {
+                  width: '100%',
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                },
+              },
+            }}
+            dayOfWeekFormatter={(day) => {
+              const days = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
+              return days[day];
             }}
           />
         </LocalizationProvider>
