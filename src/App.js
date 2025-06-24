@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Box, CircularProgress } from '@mui/material';
+import Navigation from './components/Navigation';
 import ModelSelector from './components/ModelSelector';
 import ForecastCalendar from './components/ForecastCalendar';
 import GIMCard from './components/GIMCard';
 import MetricsChart from './components/MetricsChart';
+import Documentation from './components/Documentation';
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('main');
   const [loading, setLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState({ code: 'GIMini-LSTM-F10.7-7' });
   const [selectedDate, setSelectedDate] = useState(null);
@@ -45,7 +48,7 @@ function App() {
     fetchForecastSize();
   }, [selectedDate]);
 
-  return (
+  const renderMainPage = () => (
     <Container maxWidth="lg">
       <Box sx={{ my: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
         <ModelSelector
@@ -86,6 +89,17 @@ function App() {
         </Box>
       )}
     </Container>
+  );
+
+  const renderDocumentationPage = () => (
+    <Documentation />
+  );
+
+  return (
+    <Box>
+      <Navigation currentPage={currentPage} onPageChange={setCurrentPage} />
+      {currentPage === 'main' ? renderMainPage() : renderDocumentationPage()}
+    </Box>
   );
 }
 
