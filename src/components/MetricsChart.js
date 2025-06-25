@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { eachDayOfInterval, format, parseISO } from 'date-fns';
 
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
@@ -55,6 +56,28 @@ function getAdaptiveDateRange() {
     date_from: formatDate(monthAgo),
     date_to: formatDate(today)
   };
+}
+
+function fillMetricsForFullMonth(metrics, date_from, date_to) {
+  const metricsMap = new Map();
+  metrics.forEach(item => {
+    metricsMap.set(item.date, item);
+  });
+
+  const allDates = eachDayOfInterval({
+    start: parseISO(date_from),
+    end: parseISO(date_to)
+  });
+
+  return allDates.map(dateObj => {
+    const key = format(dateObj, 'yyyy-MM-dd');
+    const label = `${dateObj.getDate().toString().padStart(2, '0')} ${MONTHS[dateObj.getMonth()]}`;
+    if (metricsMap.has(key)) {
+      return { ...metricsMap.get(key), label };
+    } else {
+      return { date: key, label, rmse: null, mae: null, mape: null };
+    }
+  });
 }
 
 function MetricCard({ title, color, dataKey, data, dateRange }) {
@@ -143,7 +166,8 @@ function MetricsChart({ modelCode }) {
         const groupedMetrics = groupMetricsByDay(data);
         console.log('Grouped metrics:', groupedMetrics);
         
-        setMetrics(groupedMetrics);
+        const fullMonthMetrics = fillMetricsForFullMonth(groupedMetrics, date_from, date_to);
+        setMetrics(fullMonthMetrics);
       } catch (error) {
         console.error('Ошибка при загрузке метрик:', error);
         setError(error.message);
