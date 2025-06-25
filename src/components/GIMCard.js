@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Paper, Box, Slider, Button, Typography, CircularProgress, Alert, Backdrop } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 
-function GIMCard({ forecastId, forecastStartDate, modelCode, shift, onShiftChange, forecastSize }) {
+function GIMCard({ forecastId, shift, onShiftChange, forecastSize }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -36,13 +36,8 @@ function GIMCard({ forecastId, forecastStartDate, modelCode, shift, onShiftChang
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
-      let filename = `forecast_${forecastId}.npz`;
-      if (modelCode && forecastStartDate) {
-        const safeDate = forecastStartDate.replace('T', '_').replace(/[:]/g, '-');
-        filename = `${modelCode}_forecast_${safeDate}.npz`;
-      }
       a.href = url;
-      a.download = filename;
+      a.download = `forecast_${forecastId}.npz`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -68,7 +63,7 @@ function GIMCard({ forecastId, forecastStartDate, modelCode, shift, onShiftChang
             max={forecastSize - 1}
             marks
             valueLabelDisplay="auto"
-            sx={{ 
+            sx={{
               flex: 1,
               '& .MuiSlider-rail': {
                 opacity: 1,
@@ -141,4 +136,4 @@ function GIMCard({ forecastId, forecastStartDate, modelCode, shift, onShiftChang
   );
 }
 
-export default GIMCard; 
+export default GIMCard;
