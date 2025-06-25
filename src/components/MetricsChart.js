@@ -41,19 +41,19 @@ function getDateRangeDays(metrics) {
 
 function getAdaptiveDateRange() {
   const today = new Date();
-  const nextMonth = new Date(today);
-  nextMonth.setMonth(today.getMonth() + 1);
-  
+  const monthAgo = new Date(today);
+  monthAgo.setMonth(today.getMonth() - 1);
+
   today.setHours(0, 0, 0, 0);
-  nextMonth.setHours(0, 0, 0, 0);
-  
+  monthAgo.setHours(0, 0, 0, 0);
+
   const formatDate = (date) => {
     return date.toISOString().slice(0, 10);
   };
-  
+
   return {
-    date_from: formatDate(today),
-    date_to: formatDate(nextMonth)
+    date_from: formatDate(monthAgo),
+    date_to: formatDate(today)
   };
 }
 
