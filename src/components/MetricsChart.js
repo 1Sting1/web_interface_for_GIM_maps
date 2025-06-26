@@ -130,42 +130,42 @@ function MetricsChart({ modelCode }) {
     setLoading(true);
     setError(null);
     setMetrics([]);
-    
+
     const { date_from, date_to } = getAdaptiveDateRange();
-    
+
     console.log('MetricsChart Debug:', {
       modelCode,
       date_from,
       date_to,
       url: `/api/get_metrics/${modelCode}?date_from=${date_from}&date_to=${date_to}`
     });
-    
+
     const fetchMetrics = async () => {
       try {
         const response = await fetch(`/api/get_metrics/${modelCode}?date_from=${date_from}&date_to=${date_to}`);
         console.log('API Response status:', response.status);
-        
+
         if (!response.ok) {
           throw new Error(`Ошибка загрузки метрик: ${response.status} ${response.statusText}`);
         }
-        
+
         const data = await response.json();
         console.log('Raw API data:', data);
         console.log('Data type:', typeof data, 'Is array:', Array.isArray(data));
-        
+
         if (!Array.isArray(data)) {
           console.error('Data is not an array:', data);
           throw new Error('Неверный формат данных от API');
         }
-        
+
         console.log('Number of records:', data.length);
         if (data.length > 0) {
           console.log('Sample record:', data[0]);
         }
-        
+
         const groupedMetrics = groupMetricsByDay(data);
         console.log('Grouped metrics:', groupedMetrics);
-        
+
         const fullMonthMetrics = fillMetricsForFullMonth(groupedMetrics, date_from, date_to);
         setMetrics(fullMonthMetrics);
       } catch (error) {
@@ -176,7 +176,7 @@ function MetricsChart({ modelCode }) {
         setLoading(false);
       }
     };
-    
+
     fetchMetrics();
   }, [modelCode]);
 
@@ -212,9 +212,6 @@ function MetricsChart({ modelCode }) {
         </Box>
         <Typography variant="body2" sx={{ color: '#666', mx: 2, fontSize: 16 }}>
           {date_from} — {date_to}
-        </Typography>
-        <Typography variant="body2" sx={{ color: '#aaa', ml: 2, fontSize: 16 }}>
-          Записей: {metrics.length}
         </Typography>
       </Box>
       <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', justifyContent: 'center', my: 2 }}>
