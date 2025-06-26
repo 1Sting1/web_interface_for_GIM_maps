@@ -335,7 +335,7 @@ cd web_interface_for_GIM_maps_test
 docker-compose up --build
 
 # Приложение будет доступно по адресу:
-# Frontend: http://0.0.0.0:3001
+# Frontend: http://0.0.0.0:3000
 # Backend API: http://0.0.0.0:8081`}
           </Box>
 
